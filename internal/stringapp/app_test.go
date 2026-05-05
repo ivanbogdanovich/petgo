@@ -1,8 +1,10 @@
 package stringapp
 
 import (
-	"errors"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUnpack(t *testing.T) {
@@ -31,25 +33,19 @@ func TestUnpack(t *testing.T) {
 
 	for _, tc := range tests {
 		tc := tc
+
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
 			got, err := Unpack(tc.input)
+
 			if tc.wantErr {
-				if !errors.Is(err, ErrInvalidString) {
-					t.Fatalf("expected ErrInvalidString, got: %v", err)
-				}
+				assert.ErrorIs(t, err, ErrInvalidString)
 				return
 			}
 
-			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
-			}
-			if got != tc.want {
-				t.Fatalf("expected %q, got %q", tc.want, got)
-			}
+			require.NoError(t, err)
+			assert.Equal(t, tc.want, got)
 		})
 	}
 }
-
-

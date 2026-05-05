@@ -1,17 +1,17 @@
 package main
 
 import (
-	"fmt"
+	"log/slog"
 	"os"
 	"petgo/internal/geometryapp/cli"
 )
 
+var logger = slog.New(slog.NewTextHandler(os.Stderr, nil))
+
 func main() {
 	app := cli.NewApp()
 	if err := app.Run(os.Args[1:]); err != nil {
-		fmt.Fprintln(os.Stderr, "error:", err)
+		logger.Error("geomcli failed", "err", err)
 		os.Exit(1)
 	}
-
-	fmt.Println("app was run")
 }

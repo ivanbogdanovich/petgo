@@ -1,7 +1,5 @@
 package queue
 
-import "fmt"
-
 type Node struct {
 	Value int
 	Next  *Node
@@ -57,19 +55,4 @@ func (q *Queue) IsEmpty() bool {
 
 func (q *Queue) Len() int {
 	return q.Size
-}
-
-func CallQueue() {
-	var q Queue
-
-	q.Enqueue(10)
-	q.Enqueue(20)
-	q.Enqueue(30)
-
-	fmt.Println("len:", q.Len())
-
-	for !q.IsEmpty() {
-		v, _ := q.Dequeue()
-		fmt.Println(v)
-	}
 }

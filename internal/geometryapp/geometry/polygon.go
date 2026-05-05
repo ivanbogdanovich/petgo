@@ -9,8 +9,10 @@ type Polygon struct {
 	Points []Point
 }
 
+const MIN_POINTS = 3
+
 func NewPolygon(points []Point) (Polygon, error) {
-	if len(points) < 3 {
+	if len(points) < MIN_POINTS {
 		return Polygon{}, fmt.Errorf("polygon must have at least 3 points")
 	}
 	return Polygon{Points: points}, nil
@@ -18,7 +20,7 @@ func NewPolygon(points []Point) (Polygon, error) {
 
 func (poly Polygon) ContainsPoint(p Point) bool {
 	n := len(poly.Points)
-	if n < 3 {
+	if n < MIN_POINTS {
 		return false
 	}
 
@@ -44,7 +46,7 @@ func (poly Polygon) ContainsPoint(p Point) bool {
 
 func (poly Polygon) Area() float64 {
 	n := len(poly.Points)
-	if n < 3 {
+	if n < MIN_POINTS {
 		return 0
 	}
 

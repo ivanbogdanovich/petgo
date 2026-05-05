@@ -4,67 +4,12 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"log/slog"
 	"os"
 	"petgo/internal/stringapp"
 )
 
-func romanToInt(s string) int {
-	srune := []rune(s)
-	alphabet := map[string]int{
-		"I": 1,
-		"V": 5,
-		"X": 10,
-		"L": 50,
-		"C": 100,
-		"D": 500,
-		"M": 1000,
-	}
-
-	count := 0
-
-	for i:=0; i < len(srune); i++ {
-		n := alphabet[string(srune[i])]
-
-		if i+1 < len(srune) && n < alphabet[string(srune[i+1])] {
-			count -= n
-		} else {
-			count += n
-		}
-	}
-
-	fmt.Println("count roman to int", count)
-	return 0
-}
-
-// {"flower","flow","flight"}
-func longestCommonPrefix(strs []string) string {
-	prefix := ""
-	count := 0
-
-	for i := 0; i < len(strs); i++ {
-		if count > len(strs[i]) {
-			return prefix
-		}
-
-		for _,value := range strs[i] {
-			if i+1 < len(strs) && count < len(strs[i]) && count < len(strs[i+1]) && strs[i][count] == strs[i+1][count] {
-				prefix += string(value)
-				count++
-			}
-		}
-	}
-	fmt.Println("prefix", prefix)
-	fmt.Println("count", count)
-	return prefix
-}
-
-func concat(values []string) string {
-    s := ""
-    for _, v := range values {
-        s += v
-    }
-    return s
-}
+var logger = slog.New(slog.NewTextHandler(os.Stderr, nil))
 
 func main() {
 	var (
@@ -82,7 +27,7 @@ func main() {
 	}
 
 	if input == "" {
-		exitWithError(fmt.Errorf("передайте строку через --input или запустите --daemon"))
+		exitWithError(fmt.Errorf("pass a string via --input or run --daemon"))
 	}
 
 	result, err := stringapp.Unpack(input)
@@ -91,32 +36,13 @@ func main() {
 	}
 
 	fmt.Println(result)
-
-	s := "hello"
-	s1 := ""
-	r := []rune(s)
-	// r1 := []rune(s1)
-	fmt.Printf("length s %c\n", r[0])
-	fmt.Printf("length s1 %d\n", len(s1))
-	fmt.Printf("concat %v\n", concat([]string{"b", "a", "r"}))
-
-	stringsPrefix :=[]string{"flower","flow","flight"}
-	// v := "hello"
-	// vrune := []rune(v)
-	// symbol := []rune("12")[0]
-	// fmt.Println("result 222", vrune[symbol])
-	// result = CountFirstSymbol("gbbccdda")
-	fmt.Println("result", result)
-	romanToInt("XXI")
-	fmt.Printf("stringsPrefix=%T\n", stringsPrefix[0])
-	longestCommonPrefix(stringsPrefix)
 }
 
 func runDaemon() {
-	fmt.Println("Ctrl+C для завершения")
+	fmt.Println("Ctrl+C to exit")
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
-		fmt.Print("Введите строку: ")
+		fmt.Print("Enter a string: ")
 		if !scanner.Scan() {
 			if err := scanner.Err(); err != nil {
 				exitWithError(err)
@@ -126,7 +52,7 @@ func runDaemon() {
 
 		result, err := stringapp.Unpack(scanner.Text())
 		if err != nil {
-			fmt.Printf("ошибка: %v\n", err)
+			logger.Error("failed to unpack input", "err", err)
 			continue
 		}
 
@@ -135,6 +61,6 @@ func runDaemon() {
 }
 
 func exitWithError(err error) {
-	fmt.Fprintln(os.Stderr, err)
+	logger.Error("command failed", "err", err)
 	os.Exit(1)
 }

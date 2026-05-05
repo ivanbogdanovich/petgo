@@ -1,7 +1,5 @@
 package doubly_linked_list
 
-import "fmt"
-
 type Node struct {
 	Value int
 	Next  *Node
@@ -92,50 +90,4 @@ func (l *List) PopBack() (int, bool) {
 	l.Tail.Next = nil
 	l.Size--
 	return value, true
-}
-
-func (l *List) PrintForward() {
-	for cur := l.Head; cur != nil; cur = cur.Next {
-		fmt.Printf("%d ", cur.Value)
-	}
-	fmt.Println()
-}
-
-func (l *List) PrintBackward() {
-	for cur := l.Tail; cur != nil; cur = cur.Prev {
-		fmt.Printf("%d ", cur.Value)
-	}
-	fmt.Println()
-}
-
-func CallDoublyLinkedList() {
-	var list List
-
-	list.PushBack(10)
-	list.PushBack(20)
-	list.PushBack(30)
-
-	fmt.Println("forward:")
-	list.PrintForward()
-
-	fmt.Println("backward:")
-	list.PrintBackward()
-
-	list.PushFront(5)
-	list.PushFront(1)
-
-	fmt.Println("after PushFront:")
-	list.PrintForward()
-	list.PrintBackward()
-
-	v, ok := list.PopFront()
-	fmt.Println("PopFront:", v, ok)
-	list.PrintForward()
-
-	v, ok = list.PopBack()
-	fmt.Println("PopBack:", v, ok)
-	list.PrintForward()
-
-	fmt.Println("len:", list.Len())
-	fmt.Println("empty:", list.IsEmpty())
 }

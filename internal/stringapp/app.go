@@ -5,61 +5,73 @@ import (
 	"unicode"
 )
 
-var ErrInvalidString = errors.New("некорректная строка")
+func (s *unpackState) appendRune(r rune) {
+	s.out = append(s.out, r)
+	s.lastRune = r
+	s.hasLastRune = true
+	s.lastWasCount = false
+}
+
+func (s *unpackState) applyCount(r rune) {
+	count := int(r - '0')
+
+	if count == 0 {
+		s.out = s.out[:len(s.out)-1]
+	} else {
+		for i := 0; i < count-1; i++ {
+			s.out = append(s.out, s.lastRune)
+		}
+	}
+
+	s.lastWasCount = true
+}
+
+var ErrInvalidString = errors.New("invalid string")
+
+type unpackState struct {
+	out          []rune
+	lastRune     rune
+	hasLastRune  bool
+	lastWasCount bool
+	escaped      bool
+}
 
 func Unpack(input string) (string, error) {
-	var (
-		out          []rune
-		lastRune     rune
-		hasLastRune  bool
-		lastWasCount bool
-		escaped      bool
-	)
+	state := unpackState{
+		out: make([]rune, 0, len(input)),
+	}
 
 	for _, r := range input {
-		if escaped {
+		if state.escaped {
 			if !unicode.IsDigit(r) && r != '\\' {
 				return "", ErrInvalidString
 			}
-			out = append(out, r)
-			lastRune = r
-			hasLastRune = true
-			lastWasCount = false
-			escaped = false
+
+			state.appendRune(r)
+			state.escaped = false
 			continue
 		}
 
 		if r == '\\' {
-			escaped = true
+			state.escaped = true
 			continue
 		}
 
 		if unicode.IsDigit(r) {
-			if !hasLastRune || lastWasCount {
+			if !state.hasLastRune || state.lastWasCount {
 				return "", ErrInvalidString
 			}
-			count := int(r - '0')
-			if count == 0 {
-				out = out[:len(out)-1]
-			} else {
-				for i := 0; i < count-1; i++ {
-					out = append(out, lastRune)
-				}
-			}
-			lastWasCount = true
+
+			state.applyCount(r)
 			continue
 		}
 
-		out = append(out, r)
-		lastRune = r
-		hasLastRune = true
-		lastWasCount = false
+		state.appendRune(r)
 	}
 
-	if escaped {
+	if state.escaped {
 		return "", ErrInvalidString
 	}
 
-	return string(out), nil
+	return string(state.out), nil
 }
-
