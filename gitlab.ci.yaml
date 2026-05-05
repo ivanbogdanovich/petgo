@@ -1,0 +1,48 @@
+image: golang:1.25
+
+stages:
+  - verify
+  - test
+  - build
+
+variables:
+  GOCACHE: "$CI_PROJECT_DIR/.cache/go-build"
+  GOMODCACHE: "$CI_PROJECT_DIR/.cache/go-mod"
+
+cache:
+  key: "${CI_COMMIT_REF_SLUG}"
+  paths:
+    - .cache/go-build
+    - .cache/go-mod
+
+verify:
+  stage: verify
+  script:
+    - go version
+    - go mod download
+    - UNFORMATTED="$(gofmt -l .)"
+    - |
+      if [ -n "$UNFORMATTED" ]; then
+        echo "Run gofmt for:"
+        echo "$UNFORMATTED"
+        exit 1
+      fi
+    - go vet ./...
+
+test:
+  stage: test
+  script:
+    - go test ./... -v
+
+build:
+  stage: build
+  script:
+    - mkdir -p build
+    - go build -o build/geomcli ./cmd/geomcli
+    - go build -o build/datastructure ./cmd/datastructure
+    - go build -o build/stringcli ./cmd/stringcli
+  artifacts:
+    when: on_success
+    expire_in: 1 week
+    paths:
+      - build/
