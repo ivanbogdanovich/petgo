@@ -13,39 +13,37 @@ func TestUnpack(t *testing.T) {
 	tests := []struct {
 		name    string
 		input   string
-		want    string
-		wantErr bool
+		expectedResult    string
+		expectedError bool
 	}{
-		{name: "basic", input: "a4bc2d5e", want: "aaaabccddddde"},
-		{name: "no digits", input: "abcd", want: "abcd"},
-		{name: "starts with digit", input: "3abc", wantErr: true},
-		{name: "digits only", input: "45", wantErr: true},
-		{name: "numbers are not allowed", input: "aaa10b", wantErr: true},
-		{name: "zero repetition", input: "aaa0b", want: "aab"},
-		{name: "empty", input: "", want: ""},
-		{name: "newline repetition", input: "d\n5abc", want: "d\n\n\n\n\nabc"},
-		{name: "escaped digits", input: `qwe\4\5`, want: "qwe45"},
-		{name: "escaped digit with count", input: `qwe\45`, want: "qwe44444"},
-		{name: "escaped slash with count", input: `qwe\\5`, want: `qwe\\\\\`},
-		{name: "invalid escape", input: `qw\ne`, wantErr: true},
-		{name: "trailing slash", input: `abc\`, wantErr: true},
+		{name: "basic", input: "a4bc2d5e", expectedResult: "aaaabccddddde"},
+		{name: "no digits", input: "abcd", expectedResult: "abcd"},
+		{name: "starts with digit", input: "3abc", expectedError: true},
+		{name: "digits only", input: "45", expectedError: true},
+		{name: "numbers are not allowed", input: "aaa10b", expectedError: true},
+		{name: "zero repetition", input: "aaa0b", expectedResult: "aab"},
+		{name: "empty", input: "", expectedResult: ""},
+		{name: "newline repetition", input: "d\n5abc", expectedResult: "d\n\n\n\n\nabc"},
+		{name: "escaped digits", input: `qwe\4\5`, expectedResult: "qwe45"},
+		{name: "escaped digit with count", input: `qwe\45`, expectedResult: "qwe44444"},
+		{name: "escaped slash with count", input: `qwe\\5`, expectedResult: `qwe\\\\\`},
+		{name: "invalid escape", input: `qw\ne`, expectedError: true},
+		{name: "trailing slash", input: `abc\`, expectedError: true},
 	}
 
 	for _, tc := range tests {
-		tc := tc
-
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
 			got, err := Unpack(tc.input)
 
-			if tc.wantErr {
+			if tc.expectedError {
 				assert.ErrorIs(t, err, ErrInvalidString)
 				return
 			}
 
 			require.NoError(t, err)
-			assert.Equal(t, tc.want, got)
+			require.Equal(t, tc.expectedResult, got)
 		})
 	}
 }

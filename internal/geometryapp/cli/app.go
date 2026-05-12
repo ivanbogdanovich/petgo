@@ -28,13 +28,13 @@ func (a *App) Run(args []string) error {
 	fs.BoolVar(&checkInside, "check-inside", false, "check whether point is inside shape")
 
 	if err := fs.Parse(args); err != nil {
-		return err
+		return fmt.Errorf("failed to parse flags: %w", err)
 	}
 
 	if isCircle {
-		circle := geometry.Circle{
-			Center: centerCircle.Center,
-			Radius: radiusCircle,
+		circle, err := geometry.NewCircle(centerCircle.Center, radiusCircle)
+		if err != nil {
+			return fmt.Errorf("failed to create circle: %w", err)
 		}
 
 		fmt.Printf("Circle area: %.2f\n", circle.Area())
@@ -53,7 +53,7 @@ func (a *App) Run(args []string) error {
 
 	polygon, err := geometry.NewPolygon(pointsFlag.Points)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create polygon: %w", err)
 	}
 
 	fmt.Printf("Polygon area: %.2f\n", polygon.Area())

@@ -1,23 +1,32 @@
 package stack
 
+type Node struct {
+	Value int
+	Next  *Node
+}
+
 type Stack struct {
-	items []int
+	head *Node
 }
 
 func (s *Stack) Push(v int) {
-	s.items = append(s.items, v)
+	s.head = &Node{
+		Value: v,
+		Next:  s.head,
+	}
 }
 
 func (s *Stack) Pop() (int, bool) {
-	if len(s.items) == 0 {
+	if s.head == nil {
 		return 0, false
 	}
-	i := len(s.items) - 1
-	v := s.items[i]
-	s.items = s.items[:i]
+
+	v := s.head.Value
+	s.head = s.head.Next
+
 	return v, true
 }
 
 func (s *Stack) IsEmpty() bool {
-	return len(s.items) == 0
+	return s.head == nil
 }

@@ -1,16 +1,30 @@
 package geometry
 
-import "math"
+import (
+	"fmt"
+	"math"
+)
 
 type Circle struct {
-	Center Point
-	Radius float64
+	center Point
+	radius float64
+}
+
+func NewCircle(center Point, radius float64) (*Circle, error) {
+	if radius < 0 {
+		return nil, fmt.Errorf("radius must be positive")
+	}
+
+	return &Circle{
+		center: center,
+		radius: radius,
+	}, nil
 }
 
 func (c Circle) ContainsPoint(p Point) bool {
-	return c.Center.Distance(p) <= c.Radius
+	return c.center.Distance(p) <= c.radius
 }
 
 func (c Circle) Area() float64 {
-	return math.Pi * c.Radius * c.Radius
+	return math.Pi * c.radius * c.radius
 }

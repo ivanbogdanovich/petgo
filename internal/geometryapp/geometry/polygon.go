@@ -6,30 +6,30 @@ import (
 )
 
 type Polygon struct {
-	Points []Point
+	points []Point
 }
 
-const MIN_POINTS = 3
+const MinPoints = 3
 
-func NewPolygon(points []Point) (Polygon, error) {
-	if len(points) < MIN_POINTS {
-		return Polygon{}, fmt.Errorf("polygon must have at least 3 points")
+func NewPolygon(points []Point) (*Polygon, error) {
+	lenPoints := len(points)
+	if lenPoints < MinPoints {
+		return &Polygon{}, fmt.Errorf("polygon must have at least 3 points")
 	}
-	return Polygon{Points: points}, nil
+
+	return &Polygon{
+		points: points,
+	}, nil
 }
 
 func (poly Polygon) ContainsPoint(p Point) bool {
-	n := len(poly.Points)
-	if n < MIN_POINTS {
-		return false
-	}
-
 	inside := false
+	n := len(poly.points)
 	j := n - 1
 
 	for i := 0; i < n; i++ {
-		xi, yi := poly.Points[i].X, poly.Points[i].Y
-		xj, yj := poly.Points[j].X, poly.Points[j].Y
+		xi, yi := poly.points[i].X, poly.points[i].Y
+		xj, yj := poly.points[j].X, poly.points[j].Y
 
 		intersects := ((yi > p.Y) != (yj > p.Y)) &&
 			(p.X < (xj-xi)*(p.Y-yi)/(yj-yi)+xi)
@@ -45,15 +45,11 @@ func (poly Polygon) ContainsPoint(p Point) bool {
 }
 
 func (poly Polygon) Area() float64 {
-	n := len(poly.Points)
-	if n < MIN_POINTS {
-		return 0
-	}
-
+	n := len(poly.points)
 	sum := 0.0
 	for i := 0; i < n; i++ {
 		j := (i + 1) % n
-		sum += poly.Points[i].X*poly.Points[j].Y - poly.Points[j].X*poly.Points[i].Y
+		sum += poly.points[i].X*poly.points[j].Y - poly.points[j].X*poly.points[i].Y
 	}
 
 	return math.Abs(sum) / 2

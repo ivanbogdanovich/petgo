@@ -4,55 +4,53 @@ import (
 	"math"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestCircleContainsPoint(t *testing.T) {
-	circle1 := Circle{
-		Center: Point{X: 0, Y: 0},
-		Radius: 5,
-	}
-	circle2 := Circle{
-		Center: Point{X: 0, Y: 0},
-		Radius: 5,
-	}
-	circle3 := Circle{
-		Center: Point{X: 15, Y: 15},
-		Radius: 0,
-	}
-	circle4 := Circle{
-		Center: Point{X: 0, Y: 0},
-		Radius: 4,
-	}
+	t.Parallel()
 	tests := []struct {
-		name   string
-		circle Circle
-		want   bool
-		got    bool
+		name           string
+		circle         Circle
+		expectedResult bool
+		got            bool
+		point          Point
 	}{
 		{
-			name:   "TestCircleContainsPoint_Inside",
-			circle: circle1,
-			got:    circle1.ContainsPoint(Point{X: 0, Y: 0}),
-			want:   true,
+			name: "TestCircleContainsPoint_Inside",
+			circle: Circle{
+				center: Point{X: 0, Y: 0},
+				radius: 5,
+			},
+			point:          Point{X: 0, Y: 0},
+			expectedResult: true,
 		},
 		{
-			name:   "TestCircleContainsPoint_Outside",
-			circle: circle2,
-			got:    circle2.ContainsPoint(Point{X: 17, Y: 17}),
-			want:   false,
+			name: "TestCircleContainsPoint_Outside",
+			circle: Circle{
+				center: Point{X: 0, Y: 0},
+				radius: 5,
+			},
+			point:          Point{X: 17, Y: 17},
+			expectedResult: false,
 		},
 		{
-			name:   "TestCircleContainsPoint_ZeroRadiusDifferentPoint",
-			circle: circle3,
-			got:    circle3.ContainsPoint(Point{X: 0, Y: 0}),
-			want:   false,
+			name: "TestCircleContainsPoint_ZeroRadiusDifferentPoint",
+			circle: Circle{
+				center: Point{X: 15, Y: 15},
+				radius: 0,
+			},
+			point:          Point{X: 0, Y: 0},
+			expectedResult: false,
 		},
 		{
-			name:   "TestCircleContainsPoint_OnBorder",
-			circle: circle4,
-			got:    circle4.ContainsPoint(Point{X: 4, Y: 0}),
-			want:   true,
+			name: "TestCircleContainsPoint_OnBorder",
+			circle: Circle{
+				center: Point{X: 0, Y: 0},
+				radius: 4,
+			},
+			point:          Point{X: 4, Y: 0},
+			expectedResult: true,
 		},
 	}
 
@@ -60,45 +58,39 @@ func TestCircleContainsPoint(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			assert.Equal(t, tt.want, tt.got)
+			got := tt.circle.ContainsPoint(tt.point)
+
+			require.Equal(t, tt.expectedResult, got)
 		})
 	}
 }
 
-const eps = 1e-9
-
-func almostEqual(a, b float64) bool {
-	return math.Abs(a-b) < eps
-}
-
 func TestCircleArea(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
-		name   string
-		circle Circle
-		want   float64
+		name           string
+		circle         Circle
+		expectedResult float64
 	}{
 		{
-			name:   "radius 0",
-			circle: Circle{Radius: 0},
-			want:   0,
+			name:           "radius 5",
+			circle:         Circle{radius: 5},
+			expectedResult: math.Pi * 25,
 		},
 		{
-			name:   "radius 0.001",
-			circle: Circle{Radius: 0.001},
-			want:   math.Pi * 0.001 * 0.001,
+			name:           "radius 0.001",
+			circle:         Circle{radius: 0.001},
+			expectedResult: math.Pi * 0.001 * 0.001,
 		},
 	}
 
 	for _, tt := range tests {
-		got := tt.circle.Area()
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			assert.Truef(
-				t,
-				almostEqual(got, tt.want),
-				"got %v, want %v",
-			)
+			got := tt.circle.Area()
+
+			require.InEpsilon(t, tt.expectedResult, got, Epsilon)
 		})
 	}
 }

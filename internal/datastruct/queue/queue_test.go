@@ -3,7 +3,6 @@ package queue
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -17,16 +16,16 @@ func TestQueueEnqueueDequeueOrder(t *testing.T) {
 
 	v, ok := q.Dequeue()
 	require.True(t, ok)
-	assert.Equal(t, 10, v)
+	require.Equal(t, 10, v)
 
 	v, ok = q.Dequeue()
 	require.True(t, ok)
-	assert.Equal(t, 20, v)
+	require.Equal(t, 20, v)
 
 	v, ok = q.Dequeue()
 	require.True(t, ok)
-	assert.Equal(t, 30, v)
+	require.Equal(t, 30, v)
 
-	assert.True(t, q.IsEmpty())
-	assert.Equal(t, 0, q.Len())
+	require.True(t, q.IsEmpty())
+	require.Equal(t, 0, q.Len())
 }

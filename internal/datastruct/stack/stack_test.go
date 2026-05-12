@@ -3,7 +3,6 @@ package stack
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -17,15 +16,15 @@ func TestStackPushPopLIFO(t *testing.T) {
 
 	v, ok := s.Pop()
 	require.True(t, ok)
-	assert.Equal(t, 3, v)
+	require.Equal(t, 3, v)
 
 	v, ok = s.Pop()
 	require.True(t, ok)
-	assert.Equal(t, 2, v)
+	require.Equal(t, 2, v)
 
 	v, ok = s.Pop()
 	require.True(t, ok)
-	assert.Equal(t, 1, v)
+	require.Equal(t, 1, v)
 
-	assert.True(t, s.IsEmpty())
+	require.True(t, s.IsEmpty())
 }
