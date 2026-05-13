@@ -19,7 +19,7 @@ type Cache struct {
 
 func New(capacity int) (*Cache, error) {
 	if capacity < 1 {
-		return nil, fmt.Errorf("Capacity must be greater than zero")
+		return nil, fmt.Errorf("capacity must be greater than zero")
 	}
 
 	return &Cache{

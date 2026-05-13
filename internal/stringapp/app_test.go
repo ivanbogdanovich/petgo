@@ -11,10 +11,10 @@ func TestUnpack(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		name    string
-		input   string
-		expectedResult    string
-		expectedError bool
+		name           string
+		input          string
+		expectedResult string
+		expectedError  bool
 	}{
 		{name: "basic", input: "a4bc2d5e", expectedResult: "aaaabccddddde"},
 		{name: "no digits", input: "abcd", expectedResult: "abcd"},

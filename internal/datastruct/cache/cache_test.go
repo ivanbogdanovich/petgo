@@ -25,7 +25,7 @@ func TestCacheSetGet(t *testing.T) {
 	cache.Set(1, 15)
 	cache.Set(3, 30)
 
-	require.Equal(t, 2, len(cache.Items))
+	require.Len(t, cache.Items, 2)
 
 	_, ok := cache.Get(2)
 	require.False(t, ok)
@@ -46,6 +46,6 @@ func TestCacheClear(t *testing.T) {
 
 	cache.Clear()
 
-	require.Equal(t, 0, len(cache.Items))
+	require.Empty(t, 0, len(cache.Items))
 	require.Equal(t, 0, cache.List.Size)
 }
