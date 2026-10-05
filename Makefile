@@ -17,3 +17,9 @@ run-geomcli:
 
 run-stringcli:
 	go run ./cmd/stringcli
+
+run-picli:
+	go run ./cmd/picli --timeout 200ms --verbose
+
+run-semaphore:
+	go run ./cmd/semaphorecli
